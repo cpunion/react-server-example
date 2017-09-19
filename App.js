@@ -1,6 +1,9 @@
 var React = require('react'),
     DOM = React.DOM, div = DOM.div, button = DOM.button, ul = DOM.ul, li = DOM.li
 
+var ActionCableProvider = require('react-actioncable-provider')
+var ActionCable = ActionCableProvider.ActionCable
+
 // This is just a simple example of a component that can be rendered on both
 // the server and browser
 
@@ -27,20 +30,30 @@ module.exports = React.createClass({
     })
   },
 
+  onReceived: function (data) {
+    console.log('Received: ', data)
+  },
+
   // For ease of illustration, we just use the React JS methods directly
   // (no JSX compilation needed)
   // Note that we allow the button to be disabled initially, and then enable it
   // when everything has loaded
   render: function() {
 
-    return div(null,
+    return React.createElement(ActionCableProvider, {
+      url: 'ws://localhost:3000/cable',
+      children: div(null,
+        React.createElement(ActionCable, {
+          channel: 'ChatChannel',
+          onReceived: this.onReceived
+        }),
+        button({onClick: this.handleClick, disabled: this.state.disabled}, 'Add Item'),
 
-      button({onClick: this.handleClick, disabled: this.state.disabled}, 'Add Item'),
+        ul({children: this.state.items.map(function(item) {
+          return li(null, item)
+        })})
 
-      ul({children: this.state.items.map(function(item) {
-        return li(null, item)
-      })})
-
-    )
+      )
+    })
   },
 })

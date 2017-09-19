@@ -1,3 +1,10 @@
+if (typeof window === 'undefined') {
+  global.window = global
+}
+if (typeof window.WebSocket === 'undefined') {
+  window.WebSocket = require('ws')
+}
+
 var http = require('http'),
     browserify = require('browserify'),
     literalify = require('literalify'),
@@ -95,10 +102,10 @@ http.createServer(function(req, res) {
     res.end()
   }
 
-// The http server listens on port 3000
-}).listen(3000, function(err) {
+// The http server listens on port 4000
+}).listen(4000, function(err) {
   if (err) throw err
-  console.log('Listening on 3000...')
+  console.log('Listening on 4000...')
 })
 
 
